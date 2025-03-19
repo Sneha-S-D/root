@@ -8,9 +8,8 @@ This project implements a Python function to parse a FLAX model and extract its 
 
 Make sure you have the required libraries installed:
 
-\`\`\`bash
+bash
 pip install flax jax
-\`\`\`
 
 ---
 
@@ -102,9 +101,8 @@ class FunctionalModel(nn.Module):
 
 Run the test script:
 
-\`\`\`bash
+bash
 python test_parse_flax_model.py
-\`\`\`
 
 #### **Expected Output**
 
@@ -115,7 +113,7 @@ test_functional_model passed!
 
 #### **Functional Model Configuration Output**
 
-\`\`\`python
+python
 {
     'features': 64,
     'layers': [
@@ -124,7 +122,7 @@ test_functional_model passed!
         {'name': 'Dense_2', 'type': 'Dense', 'features': 16, 'bias': True}
     ]
 }
-\`\`\`
+
 
 ---
 
