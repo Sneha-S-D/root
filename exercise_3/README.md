@@ -13,6 +13,3 @@ This directory contains solutions for Exercise 3 of the GSoC 2025 project TMVA S
 - Keras parser handled Dense layers; further testing needed for Conv2D.
 - FLAX NNX uses a modular, stateful design with JAX integration.
 
-## Next Steps
-- Add tests for parser robustness.
-- Explore FLAX-to-ONNX conversion for SOFIE integration.
