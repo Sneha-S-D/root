@@ -14,14 +14,14 @@ def parse_flax_model(model):
     """
     config = {}
     
-    # Extract model attributes (e.g., features, etc.)
+    # Extract model attributes 
     for attr, value in vars(model).items():
-        if not attr.startswith('_'):  # Ignore private attributes
+        if not attr.startswith('_'): 
             config[attr] = value
     
     # Initialize the model to access its parameters
     rng = jax.random.PRNGKey(0)
-    input_shape = (1, 10)  # Example input shape (batch_size, input_features)
+    input_shape = (1, 10)  
     x = jnp.ones(input_shape)
     variables = model.init(rng, x)
     
