@@ -61,6 +61,24 @@ def parse_flax_model(model: nn.Module) -> dict:
     
     return config
 ```
+
+# Output
+test_simple_model passed!
+test_functional_model passed!
+
+# Functional model configuration
+```bash
+{
+    'features': 64,
+    'layers': [
+        {'name': 'Dense_0', 'type': 'Dense', 'features': 64, 'bias': True},
+        {'name': 'Dense_1', 'type': 'Dense', 'features': 32, 'bias': True},
+        {'name': 'Dense_2', 'type': 'Dense', 'features': 16, 'bias': True}
+    ]
+}
+```
+
+
 # How It Works
 Attribute Extraction: Captures model-level attributes (e.g., features).
 
