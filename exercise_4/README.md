@@ -1,27 +1,24 @@
 # FLAX Model Parsing Exercise
 
-This project implements a Python function to parse a FLAX model and extract its configuration into a dictionary. The function is designed to work with FLAX models built using the `flax.linen` API.
+This project implements a Python function to parse a FLAX model and extract its configuration into a dictionary. The function is designed to work with FLAX models built using the \`flax.linen\` API.
 
 ---
 
-## **What Does This Do?**
+## **Install Dependencies**
 
-The `parse_flax_model` function takes a FLAX model as input and returns a dictionary containing:
-1. **Model attributes** (e.g., `features`).
-2. **Layer information** (e.g., layer type, number of features, bias).
-
-This is useful for understanding and documenting the structure of a FLAX model.
-
----
-
-## **How to Use**
-
-### **Step 1: Install Dependencies**
 Make sure you have the required libraries installed:
-```bash
-pip install flax jax
 
-## **example of a simple FLAX model**:
+\`\`\`bash
+pip install flax jax
+\`\`\`
+
+---
+
+## **Example of a Simple FLAX Model**
+
+Here’s an example of a simple FLAX model:
+
+\`\`\`python
 import flax.linen as nn
 
 class SimpleModel(nn.Module):
@@ -33,16 +30,29 @@ class SimpleModel(nn.Module):
         x = nn.relu(x)
         x = nn.Dense(self.features // 2)(x)
         return x
+\`\`\`
 
-## **Import the parse_flax_model function and use it to extract the model configuration**:
+---
+
+## **Using the Parsing Function**
+
+Import the \`parse_flax_model\` function and use it to extract the model configuration:
+
+\`\`\`python
 from parse_flax_model import parse_flax_model
 
 model = SimpleModel(features=64)
 config = parse_flax_model(model)
 print(config)
+\`\`\`
 
+---
 
-## **Expected Output**:
+## **Expected Output**
+
+The output will be a dictionary describing the model:
+
+\`\`\`python
 {
     'features': 64,
     'layers': [
@@ -50,18 +60,33 @@ print(config)
         {'name': 'Dense_1', 'type': 'Dense', 'features': 32, 'bias': True}
     ]
 }
+\`\`\`
 
-## **testing**:
-**Test 1: Simple Model**
+---
 
-run the test script for the simple model:
+## **Testing**
+
+### **Test 1: Simple Model**
+
+Run the test script for the simple model:
+
+\`\`\`bash
 python test_parse_flax_model.py
+\`\`\`
 
-**Expected Output**
+#### **Expected Output**
+
+\`\`\`
 test_simple_model passed!
+\`\`\`
 
-**Test 2: Functional Model**
+---
 
+### **Test 2: Functional Model**
+
+Here’s an example of a functional FLAX model:
+
+\`\`\`python
 class FunctionalModel(nn.Module):
     features: int
 
@@ -73,15 +98,24 @@ class FunctionalModel(nn.Module):
         x = nn.relu(x)
         x = nn.Dense(self.features // 4)(x)
         return x
+\`\`\`
 
-run the test script:
+Run the test script:
+
+\`\`\`bash
 python test_parse_flax_model.py
+\`\`\`
 
-**Expected Output**
+#### **Expected Output**
+
+\`\`\`
 test_simple_model passed!
 test_functional_model passed!
+\`\`\`
 
-**Functional Model Configuration output**
+#### **Functional Model Configuration Output**
+
+\`\`\`python
 {
     'features': 64,
     'layers': [
@@ -90,20 +124,26 @@ test_functional_model passed!
         {'name': 'Dense_2', 'type': 'Dense', 'features': 16, 'bias': True}
     ]
 }
+\`\`\`
 
+---
 
-How It Works
+## **How It Works**
 
-The parse_flax_model function:
+The \`parse_flax_model\` function:
 
-Extracts model attributes (e.g., features).
-Initializes the model with fake input to access its parameters.
-Extracts layer information (e.g., layer type, number of features, bias).
-Returns a dictionary with all the details.
+1. **Extracts model attributes** (e.g., \`features\`).
+2. **Initializes the model** with fake input to access its parameters.
+3. **Extracts layer information** (e.g., layer type, number of features, bias).
+4. **Returns a dictionary** with all the details.
 
-Dependencies
+---
 
-Python 3.x
-FLAX (pip install flax)
-JAX (pip install jax)
+## **Dependencies**
+
+- Python 3.x
+- FLAX (\`pip install flax\`)
+- JAX (\`pip install jax\`)
+
+---
 
