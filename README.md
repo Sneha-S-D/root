@@ -1,3 +1,4 @@
+
 # GSoC 2025 Exercise 3: SOFIE Keras Parser and FLAX Exploration
 
 ## Overview
@@ -16,3 +17,5 @@ This directory contains solutions for Exercise 3 of the GSoC 2025 project TMVA S
 ## Next Steps
 - Add tests for parser robustness.
 - Explore FLAX-to-ONNX conversion for SOFIE integration.
+
+Built ROOT 6.35.01 with TMVA-SOFIE and TMVA-PyMVA on macOS (M4 Pro)
