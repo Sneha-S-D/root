@@ -16,9 +16,9 @@ def parse_flax_model(model: nn.Module, input_shape: Tuple[int, ...]) -> dict:
     """
     config = {}
     
-    # Extract model attributes (e.g., features, etc.)
+    # Extract model attributes ( features, etc.)
     for attr, value in vars(model).items():
-        if not attr.startswith('_'):  # Ignore private attributes
+        if not attr.startswith('_'):  
             config[attr] = value
     
     # Initialize the model with the provided input shape
@@ -40,7 +40,7 @@ def parse_flax_model(model: nn.Module, input_shape: Tuple[int, ...]) -> dict:
     for name, param_dict in params.items():
         layer_info = {
             'name': name,
-            'type': name.split('_')[0],  # Extract layer type (e.g., 'Dense')
+            'type': name.split('_')[0],  # Extract layer type 
             'features': param_dict['kernel'].shape[-1],  # Number of output features
             'bias': 'bias' in param_dict,
             'input_tensor_name': f"{name}/input",
@@ -61,7 +61,7 @@ def parse_flax_model(model: nn.Module, input_shape: Tuple[int, ...]) -> dict:
     config['output_shape'] = tuple(output_tensor_shape)
     return config
 
-# Define a simple FLAX model for testing
+# a simple FLAX model for testing
 class SimpleModel(nn.Module):
     features: int
 
@@ -72,7 +72,7 @@ class SimpleModel(nn.Module):
         x = nn.Dense(self.features // 2)(x)
         return x
 
-# Define a model using the functional API
+# model using the functional API
 class FunctionalModel(nn.Module):
     features: int
 
