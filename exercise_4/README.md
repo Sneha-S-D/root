@@ -37,44 +37,159 @@ The parse_flax_model function extracts the model’s configuration. Save this in
 import flax.linen as nn
 import jax
 import jax.numpy as jnp
+from typing import Tuple, Any
 
-def parse_flax_model(model: nn.Module) -> dict:
-    config = {
-        "features": model.features,  # Extract top-level attributes
-        "layers": []
-    }
+def parse_flax_model(model: nn.Module, input_shape: Tuple[int, ...]) -> dict:
+    config = {}
     
-    # Fake input to initialize the model and get layer details
-    x = jnp.ones((1, 10))  # Assuming input shape (batch_size, input_dim)
-    variables = model.init(jax.random.PRNGKey(0), x)
-    params = variables["params"]
+    # Extract model attributes ( features, etc.)
+    for attr, value in vars(model).items():
+        if not attr.startswith('_'):  
+            config[attr] = value
     
-    # Extract layer information from the initialized parameters
-    for i, (layer_name, layer_params) in enumerate(params.items()):
-        layer_config = {
-            "name": layer_name,
-            "type": "Dense",  # Assuming all are Dense layers for this example
-            "features": layer_params["kernel"].shape[-1],  # Output features
-            "bias": "bias" in layer_params  # Check if bias is present
+    # Initialize the model with the provided input shape
+    rng = jax.random.PRNGKey(0)
+    x = jnp.ones(input_shape)
+    variables = model.init(rng, x)
+    params = variables['params']
+    
+    # Use jax.eval_shape to get the overall output shape
+    def apply_fn(params, x):
+        return model.apply({'params': params}, x)
+    output_shape_struct = jax.eval_shape(apply_fn, params, x)
+    output_tensor_shape = output_shape_struct.shape
+    
+    # Extract layer information with tensor shapes
+    layers = []
+    current_input_shape = input_shape
+    
+    for name, param_dict in params.items():
+        layer_info = {
+            'name': name,
+            'type': name.split('_')[0],  # Extract layer type 
+            'features': param_dict['kernel'].shape[-1],  # Number of output features
+            'bias': 'bias' in param_dict,
+            'input_tensor_name': f"{name}/input",
+            'input_tensor_shape': tuple(current_input_shape),
+            'output_tensor_name': f"{name}/output"
         }
-        config["layers"].append(layer_config)
+        
+        # Compute output shape manually for Dense layers
+        if layer_info['type'] == 'Dense':
+            output_shape = (current_input_shape[0], param_dict['kernel'].shape[-1])
+            layer_info['output_tensor_shape'] = output_shape
+            current_input_shape = output_shape
+        
+        layers.append(layer_info)
     
-    return config
-```
+    config['layers'] = layers
+    config['input_shape'] = tuple(input_shape)
+    config['output_shape'] = tuple(output_tensor_shape)
+    return config```
 
 # Output
 test_simple_model passed!
 test_functional_model passed!
 
+# Simple model configuration
+```bash
+SimpleModel Config: {
+  "features": 64,
+  "name": null,
+  "layers": [
+    {
+      "name": "Dense_0",
+      "type": "Dense",
+      "features": 64,
+      "bias": true,
+      "input_tensor_name": "Dense_0/input",
+      "input_tensor_shape": [
+        1,
+        10
+      ],
+      "output_tensor_name": "Dense_0/output",
+      "output_tensor_shape": [
+        1,
+        64
+      ]
+    },
+    {
+      "name": "Dense_1",
+      "type": "Dense",
+      "features": 32,
+      "bias": true,
+      "input_tensor_name": "Dense_1/input",
+      "input_tensor_shape": [
+        1,
+        64
+      ],
+      "output_tensor_name": "Dense_1/output",
+      "output_tensor_shape": [
+        1,
+        32
+      ]
+    }
+  ],
+  "input_shape": [
+    1,
+    10
+  ],
+  "output_shape": [
+    1,
+    32
+  ]
+}
+
+
+```
+
 # Functional model configuration
 ```bash
-{
-    'features': 64,
-    'layers': [
-        {'name': 'Dense_0', 'type': 'Dense', 'features': 64, 'bias': True},
-        {'name': 'Dense_1', 'type': 'Dense', 'features': 32, 'bias': True},
-        {'name': 'Dense_2', 'type': 'Dense', 'features': 16, 'bias': True}
-    ]
+FunctionalModel Config: {
+  "features": 64,
+  "name": null,
+  "layers": [
+    {
+      "name": "Dense_0",
+      "type": "Dense",
+      "features": 64,
+      "bias": true,
+      "input_tensor_name": "Dense_0/input",
+      "input_tensor_shape": [
+        1,
+        10
+      ],
+      "output_tensor_name": "Dense_0/output",
+      "output_tensor_shape": [
+        1,
+        64
+      ]
+    },
+    {
+      "name": "Dense_1",
+      "type": "Dense",
+      "features": 32,
+      "bias": true,
+      "input_tensor_name": "Dense_1/input",
+      "input_tensor_shape": [
+        1,
+        64
+      ],
+      "output_tensor_name": "Dense_1/output",
+      "output_tensor_shape": [
+        1,
+        32
+      ]
+    }
+  ],
+  "input_shape": [
+    1,
+    10
+  ],
+  "output_shape": [
+    1,
+    32
+  ]
 }
 ```
 
