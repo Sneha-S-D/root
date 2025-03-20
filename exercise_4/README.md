@@ -197,9 +197,35 @@ FunctionalModel Config: {
 # How It Works
 Attribute Extraction: Captures model-level attributes (e.g., features).
 
-Model Initialization: Uses a fake input to initialize the model, revealing its layer structure.
+Model Initialization: Uses a user-provided input shape to initialize the model, revealing its layer structure dynamically.
 
-Layer Parsing: Iterates through the initialized parameters to extract layer details (name, type, features, bias).
+Layer Parsing: Iterates through the initialized parameters to extract layer details (name, type, features, bias) and computes input/output tensor shapes and names.
 
-Output: Returns a dictionary with the model’s configuration.
+Output: Returns a dictionary with the model’s configuration, including tensor flow details for SOFIE integration.
+
+
+---
+
+### Changes Applied
+1. Updated to mention tensor names and shapes for SOFIE integration.
+2. **Parsing Function**: Replaced with the latest version, reflecting the `input_shape` parameter and tensor details.
+3. **Using the Parsing Function**: Updated example to include `input_shape=(1, 10)` explicitly.
+
+4.  Expanded to include tensor shape and name extraction.
+5. **Testing**: Added the full test script with updated assertions for tensor shapes.
+6. **Enhancements Made**: Added a new section summarizing the key changes (generalized input shape, tensor names/shapes).
+7.The function can parse models with any valid input shape (e.g., (1, 10) for dense models, (1, 28, 28, 1) for CNNs, or (1, 20) for a different dense model).
+
+**Execution Change**: 
+The input shape must be provided as an argument, allowing the function to initialize the model dynamically with the correct tensor shape.
+
+Parameter shapes (e.g., kernel) adapt to the input shape, ensuring accurate layer configuration extraction.
+
+
+Initialization: Instead of a static jnp.ones((1, 10)), the model is initialized with jnp.ones(input_shape), where input_shape is a user-defined tuple.
+
+Layer Parsing: The function must handle varying input dimensions, potentially affecting how shapes are inferred (e.g., 2D for Dense, 4D for Conv2D).
+
+
+
 
